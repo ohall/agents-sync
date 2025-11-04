@@ -2,6 +2,8 @@
 
 Ensure AGENTS.md is the single canonical rules file in your repository and automatically expose it to major AI coding environments.
 
+`agents-link` follows the [AGENTS.md standard](https://agents.md/)—a simple, open format for guiding coding agents, used by over 20k open-source projects.
+
 ## What it does
 
 `agents-link` treats `AGENTS.md` as the single source of truth and creates symlinks (or managed copies when symlinks aren't available) to the following target rule files:
