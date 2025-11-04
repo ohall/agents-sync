@@ -1,17 +1,18 @@
-import fs from 'fs';
-import path from 'path';
-import crypto from 'crypto';
+import fs from "fs";
+import path from "path";
+import crypto from "crypto";
 
-const SOURCE_FILE = 'AGENTS.md';
-const MANAGED_MARKER = 'agents-link:managed:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855';
+const SOURCE_FILE = "AGENTS.md";
+const MANAGED_MARKER =
+  "agents-link:managed:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855";
 
 const TARGET_FILES = [
-  'CLAUDE.md',
-  '.cursor/rules/AGENTS.md',
-  '.cursorrules',
-  '.windsurf/rules/AGENTS.md',
-  '.github/copilot-instructions.md',
-  '.rules'
+  "CLAUDE.md",
+  ".cursor/rules/AGENTS.md",
+  ".cursorrules",
+  ".windsurf/rules/AGENTS.md",
+  ".github/copilot-instructions.md",
+  ".rules",
 ];
 
 /**
@@ -30,7 +31,7 @@ function generateManagedHeader() {
  */
 function isManagedFile(filePath) {
   try {
-    const content = fs.readFileSync(filePath, 'utf8');
+    const content = fs.readFileSync(filePath, "utf8");
     return content.includes(MANAGED_MARKER);
   } catch {
     return false;
@@ -82,7 +83,10 @@ function createLink(sourcePath, targetPath) {
   if (fileExists(absoluteTarget)) {
     if (isSymlink(absoluteTarget)) {
       const linkTarget = fs.readlinkSync(absoluteTarget);
-      const resolvedLink = path.resolve(path.dirname(absoluteTarget), linkTarget);
+      const resolvedLink = path.resolve(
+        path.dirname(absoluteTarget),
+        linkTarget,
+      );
       if (resolvedLink === absoluteSource) {
         console.log(`  ✓ ${targetPath} (symlink already exists)`);
         return;
@@ -103,16 +107,19 @@ function createLink(sourcePath, targetPath) {
 
   // Try creating symlink
   try {
-    const relativeSource = path.relative(path.dirname(absoluteTarget), absoluteSource);
-    fs.symlinkSync(relativeSource, absoluteTarget, 'file');
+    const relativeSource = path.relative(
+      path.dirname(absoluteTarget),
+      absoluteSource,
+    );
+    fs.symlinkSync(relativeSource, absoluteTarget, "file");
     console.log(`  ✓ ${targetPath} (symlink created)`);
     return;
   } catch (symlinkError) {
     // Symlink failed, create managed copy
     try {
-      const sourceContent = fs.readFileSync(absoluteSource, 'utf8');
+      const sourceContent = fs.readFileSync(absoluteSource, "utf8");
       const managedContent = generateManagedHeader() + sourceContent;
-      fs.writeFileSync(absoluteTarget, managedContent, 'utf8');
+      fs.writeFileSync(absoluteTarget, managedContent, "utf8");
       console.log(`  ✓ ${targetPath} (managed copy created)`);
     } catch (copyError) {
       console.error(`  ✗ ${targetPath} (failed: ${copyError.message})`);
@@ -143,9 +150,9 @@ function updateManagedCopy(sourcePath, targetPath) {
   }
 
   try {
-    const sourceContent = fs.readFileSync(absoluteSource, 'utf8');
+    const sourceContent = fs.readFileSync(absoluteSource, "utf8");
     const managedContent = generateManagedHeader() + sourceContent;
-    fs.writeFileSync(absoluteTarget, managedContent, 'utf8');
+    fs.writeFileSync(absoluteTarget, managedContent, "utf8");
     console.log(`  ✓ ${targetPath} (synced)`);
   } catch (error) {
     console.error(`  ✗ ${targetPath} (failed: ${error.message})`);
@@ -194,10 +201,10 @@ export async function init() {
   const sourcePath = path.join(cwd, SOURCE_FILE);
 
   if (!fileExists(sourcePath)) {
-    throw Object.assign(
-      new Error(`${SOURCE_FILE} not found in ${cwd}`),
-      { code: 'ENOENT', path: sourcePath }
-    );
+    throw Object.assign(new Error(`${SOURCE_FILE} not found in ${cwd}`), {
+      code: "ENOENT",
+      path: sourcePath,
+    });
   }
 
   console.log(`Initializing agents-link from ${SOURCE_FILE}...\n`);
@@ -206,7 +213,7 @@ export async function init() {
     createLink(sourcePath, path.join(cwd, targetFile));
   }
 
-  console.log('\nDone!');
+  console.log("\nDone!");
 }
 
 /**
@@ -217,10 +224,10 @@ export async function sync() {
   const sourcePath = path.join(cwd, SOURCE_FILE);
 
   if (!fileExists(sourcePath)) {
-    throw Object.assign(
-      new Error(`${SOURCE_FILE} not found in ${cwd}`),
-      { code: 'ENOENT', path: sourcePath }
-    );
+    throw Object.assign(new Error(`${SOURCE_FILE} not found in ${cwd}`), {
+      code: "ENOENT",
+      path: sourcePath,
+    });
   }
 
   console.log(`Syncing from ${SOURCE_FILE}...\n`);
@@ -229,7 +236,7 @@ export async function sync() {
     updateManagedCopy(sourcePath, path.join(cwd, targetFile));
   }
 
-  console.log('\nDone!');
+  console.log("\nDone!");
 }
 
 /**
@@ -238,13 +245,13 @@ export async function sync() {
 export async function clean() {
   const cwd = process.cwd();
 
-  console.log('Cleaning agents-link managed files...\n');
+  console.log("Cleaning agents-link managed files...\n");
 
   for (const targetFile of TARGET_FILES) {
     removeLink(path.join(cwd, targetFile));
   }
 
-  console.log('\nDone!');
+  console.log("\nDone!");
 }
 
 /**
@@ -253,7 +260,7 @@ export async function clean() {
 export async function printTargets() {
   const cwd = process.cwd();
 
-  console.log('Target files:\n');
+  console.log("Target files:\n");
 
   for (const targetFile of TARGET_FILES) {
     const absolutePath = path.join(cwd, targetFile);
@@ -261,15 +268,15 @@ export async function printTargets() {
     const isLink = isSymlink(absolutePath);
     const isManaged = !isLink && exists && isManagedFile(absolutePath);
 
-    let status = '';
+    let status = "";
     if (isLink) {
-      status = ' [symlink]';
+      status = " [symlink]";
     } else if (isManaged) {
-      status = ' [managed]';
+      status = " [managed]";
     } else if (exists) {
-      status = ' [exists, not managed]';
+      status = " [exists, not managed]";
     } else {
-      status = ' [not created]';
+      status = " [not created]";
     }
 
     console.log(`  ${targetFile}${status}`);

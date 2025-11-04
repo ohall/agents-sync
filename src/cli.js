@@ -1,4 +1,4 @@
-import { init, sync, clean, printTargets } from './index.js';
+import { init, sync, clean, printTargets } from "./index.js";
 
 const USAGE = `
 agents-link - Sync AGENTS.md to AI coding environment rule files
@@ -27,28 +27,28 @@ async function main() {
   const args = process.argv.slice(2);
   const command = args[0];
 
-  if (!command || command === '--help' || command === '-h') {
+  if (!command || command === "--help" || command === "-h") {
     console.log(USAGE);
     process.exit(0);
   }
 
-  if (command === '--version' || command === '-v') {
-    console.log('agents-link v1.0.0');
+  if (command === "--version" || command === "-v") {
+    console.log("agents-link v1.0.0");
     process.exit(0);
   }
 
   try {
     switch (command) {
-      case 'init':
+      case "init":
         await init();
         break;
-      case 'sync':
+      case "sync":
         await sync();
         break;
-      case 'clean':
+      case "clean":
         await clean();
         break;
-      case 'print-targets':
+      case "print-targets":
         await printTargets();
         break;
       default:
@@ -57,8 +57,8 @@ async function main() {
         process.exit(2);
     }
   } catch (error) {
-    if (error.code === 'ENOENT' && error.path?.endsWith('AGENTS.md')) {
-      console.error('Error: AGENTS.md not found in current directory');
+    if (error.code === "ENOENT" && error.path?.endsWith("AGENTS.md")) {
+      console.error("Error: AGENTS.md not found in current directory");
       process.exit(3);
     }
     throw error;
