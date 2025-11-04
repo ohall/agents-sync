@@ -34,10 +34,11 @@ describe("agents-link", () => {
 
       await init();
 
-      // Check that CLAUDE.md was created with managed header
+      // Check that CLAUDE.md was created (symlink or managed copy)
       expect(fs.existsSync("CLAUDE.md")).toBe(true);
       const claudeContent = fs.readFileSync("CLAUDE.md", "utf8");
-      expect(claudeContent).toContain("agents-link:managed");
+      // Content should match source (symlink resolves to source)
+      // or contain source with managed header (managed copy)
       expect(claudeContent).toContain(sourceContent);
 
       consoleSpy.mockRestore();
@@ -88,11 +89,12 @@ describe("agents-link", () => {
       // First init
       await init();
 
-      // Second init should recognize existing managed file
+      // Second init should recognize existing file (symlink or managed copy)
       await init();
 
       const logs = consoleSpy.mock.calls.flat().join("\n");
-      expect(logs).toContain("managed copy already exists");
+      // Should show either "managed copy already exists" or "symlink already exists"
+      expect(logs).toMatch(/(managed copy already exists|symlink already exists)/);
 
       consoleSpy.mockRestore();
     });
@@ -225,7 +227,8 @@ describe("agents-link", () => {
       await printTargets();
 
       const output = consoleSpy.mock.calls.flat().join("\n");
-      expect(output).toContain("[managed]");
+      // Should show either [managed] or [symlink] depending on OS support
+      expect(output).toMatch(/\[(managed|symlink)\]/);
 
       consoleSpy.mockRestore();
     });

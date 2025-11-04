@@ -30,11 +30,13 @@ export async function main() {
   if (!command || command === "--help" || command === "-h") {
     console.log(USAGE);
     process.exit(0);
+    return; // For test compatibility when process.exit is mocked
   }
 
   if (command === "--version" || command === "-v") {
     console.log("agents-link v1.0.0");
     process.exit(0);
+    return; // For test compatibility when process.exit is mocked
   }
 
   try {
@@ -55,14 +57,19 @@ export async function main() {
         console.error(`Unknown command: ${command}`);
         console.log(USAGE);
         process.exit(2);
+        return; // For test compatibility when process.exit is mocked
     }
   } catch (error) {
     if (error.code === "ENOENT" && error.path?.endsWith("AGENTS.md")) {
       console.error("Error: AGENTS.md not found in current directory");
       process.exit(3);
+      return; // For test compatibility when process.exit is mocked
     }
     throw error;
   }
 }
 
-main();
+// Only run main if this file is being executed directly (not imported)
+if (import.meta.url === `file://${process.argv[1]}`) {
+  main();
+}
