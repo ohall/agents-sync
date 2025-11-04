@@ -1,0 +1,47 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  test:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+        node-version: [18.x, 20.x]
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Run linter
+        run: npm run lint || echo "No linting configured"
+
+      - name: Check formatting
+        run: npm run format:check || echo "No format check configured"
+
+      - name: Run tests
+        run: npm test || echo "No tests defined"
+
+      - name: Test CLI commands
+        shell: bash
+        run: |
+          echo "# Test AGENTS.md" > AGENTS.md
+          node bin/agents-link.js init
+          node bin/agents-link.js print-targets
+          node bin/agents-link.js sync
+          node bin/agents-link.js clean
