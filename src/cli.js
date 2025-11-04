@@ -69,7 +69,8 @@ export async function main() {
   }
 }
 
-// Only run main if this file is being executed directly (not imported)
-if (import.meta.url === `file://${process.argv[1]}`) {
+// Run main when imported by bin file, skip when imported by tests
+// Tests will import and call main() directly with process.exit mocked
+if (!process.env.VITEST) {
   main();
 }
