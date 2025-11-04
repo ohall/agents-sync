@@ -26,6 +26,36 @@ function generateManagedHeader() {
 }
 
 /**
+ * Generate default AGENTS.md template
+ */
+function generateDefaultAgentsMd() {
+  return `# AGENTS.md
+
+A single source of truth for agents (and busy humans) working on this project.
+
+## Project Overview
+
+Describe your project's purpose, goals, and key information here.
+
+## Development Guidelines
+
+Add your development guidelines, coding standards, and best practices here.
+
+## Testing
+
+Describe your testing approach and requirements here.
+
+## Contributing
+
+Add contribution guidelines and workflow information here.
+
+## Additional Notes
+
+Add any other important information for agents and developers working on this project.
+`;
+}
+
+/**
  * Check if a file is managed by agents-link
  */
 function isManagedFile(filePath) {
@@ -199,11 +229,21 @@ export async function init() {
   const cwd = process.cwd();
   const sourcePath = path.join(cwd, SOURCE_FILE);
 
+  // Create AGENTS.md if it doesn't exist
   if (!fileExists(sourcePath)) {
-    throw Object.assign(new Error(`${SOURCE_FILE} not found in ${cwd}`), {
-      code: "ENOENT",
-      path: sourcePath,
-    });
+    try {
+      const defaultContent = generateDefaultAgentsMd();
+      fs.writeFileSync(sourcePath, defaultContent, "utf8");
+      console.log(`Created ${SOURCE_FILE} with default template.\n`);
+    } catch (error) {
+      throw Object.assign(
+        new Error(`Failed to create ${SOURCE_FILE}: ${error.message}`),
+        {
+          code: "EIO",
+          path: sourcePath,
+        },
+      );
+    }
   }
 
   console.log(`Initializing agents-link from ${SOURCE_FILE}...\n`);

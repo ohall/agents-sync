@@ -175,27 +175,31 @@ describe("cli", () => {
       consoleErrorSpy.mockRestore();
     });
 
-    it("should exit with code 3 when AGENTS.md does not exist", async () => {
+    it("should create AGENTS.md when it does not exist", async () => {
+      expect(fs.existsSync("AGENTS.md")).toBe(false);
+
       process.argv = ["node", "bin/agents-link.js", "init"];
-      const exitCode = { value: null };
-      process.exit = vi.fn((code) => {
-        exitCode.value = code;
+      process.exit = vi.fn(() => {
+        // Don't actually exit in tests
       });
 
+      const consoleLogSpy = vi
+        .spyOn(console, "log")
+        .mockImplementation(() => {});
       const consoleErrorSpy = vi
         .spyOn(console, "error")
         .mockImplementation(() => {});
 
-      try {
-        await main();
-      } catch {
-        // Ignore process.exit errors
-      }
+      await main();
 
-      expect(exitCode.value).toBe(3);
-      const output = consoleErrorSpy.mock.calls.flat().join("\n");
-      expect(output).toContain("AGENTS.md not found");
+      expect(fs.existsSync("AGENTS.md")).toBe(true);
+      const content = fs.readFileSync("AGENTS.md", "utf8");
+      expect(content).toContain("# AGENTS.md");
 
+      const output = consoleLogSpy.mock.calls.flat().join("\n");
+      expect(output).toContain("Created AGENTS.md");
+
+      consoleLogSpy.mockRestore();
       consoleErrorSpy.mockRestore();
     });
   });

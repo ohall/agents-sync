@@ -61,10 +61,11 @@ npm run agents:init
 
 ## How it works
 
-1. **Symlinks first**: The tool attempts to create symlinks to `AGENTS.md`
-2. **Fallback to managed copies**: If symlinks fail (e.g., Windows without developer mode), it creates a copy with a header marker
-3. **Safe and idempotent**: Never overwrites existing non-managed files
-4. **Sync on demand**: Use `agents-link sync` to update managed copies when `AGENTS.md` changes
+1. **Auto-creates AGENTS.md**: If `AGENTS.md` doesn't exist, `agents-link init` creates it with a default template
+2. **Symlinks first**: The tool attempts to create symlinks to `AGENTS.md`
+3. **Fallback to managed copies**: If symlinks fail (e.g., Windows without developer mode), it creates a copy with a header marker
+4. **Safe and idempotent**: Never overwrites existing non-managed files
+5. **Sync on demand**: Use `agents-link sync` to update managed copies when `AGENTS.md` changes
 
 ## Managed copies
 
@@ -81,7 +82,7 @@ The tool uses this marker to identify files it can safely update or remove.
 ## Requirements
 
 - Node.js >= 18.0.0
-- An `AGENTS.md` file in your project root
+- `AGENTS.md` will be created automatically if it doesn't exist when you run `agents-link init`
 
 ## Development
 

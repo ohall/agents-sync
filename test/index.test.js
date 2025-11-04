@@ -62,8 +62,19 @@ describe("agents-link", () => {
       consoleSpy.mockRestore();
     });
 
-    it("should throw error when AGENTS.md does not exist", async () => {
-      await expect(init()).rejects.toThrow("AGENTS.md not found");
+    it("should create AGENTS.md with default template when it does not exist", async () => {
+      expect(fs.existsSync("AGENTS.md")).toBe(false);
+
+      const consoleSpy = vi.spyOn(console, "log").mockImplementation(() => {});
+
+      await init();
+
+      expect(fs.existsSync("AGENTS.md")).toBe(true);
+      const content = fs.readFileSync("AGENTS.md", "utf8");
+      expect(content).toContain("# AGENTS.md");
+      expect(content).toContain("A single source of truth");
+
+      consoleSpy.mockRestore();
     });
 
     it("should skip existing non-managed files", async () => {
