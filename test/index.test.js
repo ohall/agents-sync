@@ -30,7 +30,9 @@ describe("agents-link", () => {
       fs.writeFileSync("AGENTS.md", sourceContent, "utf8");
 
       const consoleSpy = vi.spyOn(console, "log").mockImplementation(() => {});
-      const consoleErrorSpy = vi.spyOn(console, "error").mockImplementation(() => {});
+      const consoleErrorSpy = vi
+        .spyOn(console, "error")
+        .mockImplementation(() => {});
 
       await init();
 
@@ -94,7 +96,9 @@ describe("agents-link", () => {
 
       const logs = consoleSpy.mock.calls.flat().join("\n");
       // Should show either "managed copy already exists" or "symlink already exists"
-      expect(logs).toMatch(/(managed copy already exists|symlink already exists)/);
+      expect(logs).toMatch(
+        /(managed copy already exists|symlink already exists)/,
+      );
 
       consoleSpy.mockRestore();
     });
@@ -234,4 +238,3 @@ describe("agents-link", () => {
     });
   });
 });
-

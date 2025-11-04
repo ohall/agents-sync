@@ -1,6 +1,5 @@
 import fs from "fs";
 import path from "path";
-import crypto from "crypto";
 
 const SOURCE_FILE = "AGENTS.md";
 const MANAGED_MARKER =
